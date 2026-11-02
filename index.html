@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Mapa turístico do Espírito Santo</title>
+    <!-- Vincula o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section id="login">
+    <div class="box">
+        <h1>Espírito Santo</h1>
+        <p id="sub">Entre para ver o mapa dos pontos turísticos.</p>
+        <div id="nameRow" class="hidden">
+            <label for="nome">Nome</label>
+            <input id="nome" autocomplete="name">
+        </div>
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email">
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" autocomplete="current-password">
+        <p id="err" role="alert"></p>
+        <button class="btn" id="go">Entrar</button>
+        <button class="link" id="toggle">Criar uma conta</button>
+    </div>
+</section>
+
+<div id="app" class="hidden">
+    <header>
+        <div>
+            <h1>Mapa do Espírito Santo</h1>
+            <span id="hi"></span>
+        </div>
+        <button class="out" id="out">Sair</button>
+    </header>
+    <main>
+        <div class="mapwrap">
+            <!-- SVG Geográfico Detalhado do Espírito Santo -->
+            <svg id="map" viewBox="-80 -40 500 580" role="img" aria-label="Mapa do Espírito Santo com pontos turísticos">
+                <!-- Oceano e fundo -->
+                <rect width="100%" height="100%" fill="var(--sea)" />
+                
+                <!-- Linhas de Grade de Navegação Estética -->
+                <g stroke="var(--line)" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.6">
+                    <line x1="0" y1="100" x2="400" y2="100" />
+                    <line x1="0" y1="200" x2="400" y2="200" />
+                    <line x1="0" y1="300" x2="400" y2="300" />
+                    <line x1="0" y1="400" x2="400" y2="400" />
+                    <line x1="100" y1="0" x2="100" y2="500" />
+                    <line x1="200" y1="0" x2="200" y2="500" />
+                    <line x1="300" y1="0" x2="300" y2="500" />
+                </g>
+
+                <!-- Estados Vizinhos -->
+                <!-- Minas Gerais & Bahia -->
+                <path d="M -80,-40 L 158,15 L 140,55 L 152,70 L 144,98 L 115,120 L 122,150 L 98,190 L 112,240 L 75,290 L 88,340 L 50,400 L -80,420 Z" fill="var(--land2)" stroke="var(--edge)" stroke-width="1" />
+                <!-- Rio de Janeiro -->
+                <path d="M 50,400 L 88,340 L 102,360 L 114,402 L 146,450 L 138,475 L 100,520 L -80,540 L -80,420 Z" fill="var(--land2)" stroke="var(--edge)" stroke-width="1" />
+
+                <!-- ESPÍRITO SANTO (Traçado Cartográfico) -->
+                <path class="es" d="M 158,15 C 170,10 185,12 198,8 L 222,42 L 210,65 L 235,90 L 222,122 L 238,140 L 255,185 L 242,212 L 258,235 C 255,250 248,260 249,275 L 254,282 L 244,295 L 240,315 L 228,340 L 214,358 L 222,364 L 210,388 L 195,405 L 178,435 L 146,450 L 114,402 L 102,360 L 88,340 L 75,290 L 112,240 L 98,190 L 122,150 L 115,120 L 144,98 L 152,70 L 140,55 L 158,15 Z" fill="var(--land)" stroke="var(--edge)" stroke-width="2" stroke-linejoin="round" />
+
+                <!-- Linhas Hidrográficas (Rios Principais) -->
+                <path class="river" d="M 105,170 Q 140,165 170,185 T 252,192" stroke-width="2" />
+                <path class="river" d="M 150,75 Q 180,82 200,70 T 225,118" stroke-width="1.5" />
+                <path class="river" d="M 85,320 Q 130,340 170,350 T 218,375" stroke-width="1.5" />
+
+                <!-- Identificações Textuais de Divisa -->
+                <text x="-40" y="80" fill="var(--mut)" font-size="12" font-weight="bold" opacity="0.5" font-family="sans-serif">MINAS GERAIS</text>
+                <text x="-40" y="460" fill="var(--mut)" font-size="12" font-weight="bold" opacity="0.5" font-family="sans-serif">RIO DE JANEIRO</text>
+                <text x="145" y="-10" fill="var(--mut)" font-size="12" font-weight="bold" opacity="0.5" font-family="sans-serif">BAHIA</text>
+                <text x="250" y="450" class="st" font-size="14" font-weight="bold">Oceano Atlântico</text>
+
+                <!-- Rosa dos Ventos -->
+                <g transform="translate(340, 60)" stroke="var(--ink)" stroke-width="1.5" fill="none">
+                    <circle r="20" stroke-dasharray="2,2" />
+                    <line x1="0" y1="-25" x2="0" y2="25" />
+                    <line x1="-25" y1="0" x2="25" y2="0" />
+                    <polygon points="0,-25 5,-5 0,0" fill="var(--pin)" />
+                    <polygon points="0,-25 -5,-5 0,0" fill="var(--ink)" />
+                    <text x="-5" y="-28" font-size="11" font-weight="bold" fill="var(--ink)" stroke="none">N</text>
+                </g>
+
+                <!-- Grupo onde os pins dos lugares serão renderizados dinamicamente pelo arquivo JS -->
+                <g id="pinsGroup"></g>
+            </svg>
+            <div class="zoom">
+                <button id="zin" aria-label="Aproximar">+</button>
+                <button id="zout" aria-label="Afastar">−</button>
+            </div>
+        </div>
+        <div>
+            <div class="info" aria-live="polite">
+                <h2 id="t">Selecione um local</h2>
+                <p class="city" id="c"></p>
+                <p id="d">Clique em um marcador no mapa ou utilize a lista de botões abaixo para ver os detalhes turísticos.</p>
+                <p id="tip"></p>
+            </div>
+            <div class="list" id="chips"></div>
+        </div>
+    </main>
+</div>
+
+<!-- Vincula a lógica externa em JavaScript -->
+<script src="app.js"></script>
+</body>
+</html>
